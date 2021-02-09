@@ -41,10 +41,21 @@ var updateDeploymentCmd = &cobra.Command{
 	},
 }
 
+var deleteDeploymentCmd = &cobra.Command{
+	Use:   "delete-deployment",
+	Short: "A brief description -> deleteDeploymentCmd",
+	Long:  `A longer description -> deleteDeploymentCmd`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("delete deployment called")
+		api.DeleteDeployment()
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(createDeploymentCmd)
 	rootCmd.AddCommand(getDeploymentCmd)
 	rootCmd.AddCommand(updateDeploymentCmd)
+	rootCmd.AddCommand(deleteDeploymentCmd)
 	createDeploymentCmd.PersistentFlags().Int32VarP(&replica, "replica", "r", 1, "This flag sets the number of replicas")
 	createDeploymentCmd.PersistentFlags().StringVarP(&image, "image", "i", "apiserver:1.0.1", "This flag sets the image name with version")
 	updateDeploymentCmd.PersistentFlags().Int32VarP(&replica, "replica", "r", 1, "This flag sets the number of replicas")

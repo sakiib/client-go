@@ -114,3 +114,22 @@ func UpdateDeployment(replica int32, image string) {
 
 	fmt.Println("Updated deployment...")
 }
+
+func DeleteDeployment() {
+	clientSet, err := CreateClientSet()
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	deploymentClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
+
+	deletePolicy := metav1.DeletePropagationForeground
+	if err := deploymentClient.Delete(context.TODO(), "apiserver", metav1.DeleteOptions{
+		PropagationPolicy: &deletePolicy,
+	}); err != nil {
+		log.Println(err.Error())
+	}
+
+	fmt.Println("Deleted deployment.")
+}

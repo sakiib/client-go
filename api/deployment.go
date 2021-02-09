@@ -11,7 +11,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func CreateDeployment() {
+func CreateDeployment(replica int32, image string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
 		log.Println(err)
@@ -25,7 +25,7 @@ func CreateDeployment() {
 			Name: "apiserver",
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas: int32Ptr(2),
+			Replicas: int32Ptr(replica),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app": "apiserver",
@@ -41,7 +41,7 @@ func CreateDeployment() {
 					Containers: []apiv1.Container{
 						{
 							Name:  "apiserver",
-							Image: "sakibalamin/apiserver:1.0.1",
+							Image: "sakibalamin/"+image,
 							Ports: []apiv1.ContainerPort{
 								{
 									Name:          "http",

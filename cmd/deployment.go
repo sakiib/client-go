@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/sakiib/client-go/api"
 
 	"github.com/spf13/cobra"
@@ -30,9 +31,22 @@ var getDeploymentCmd = &cobra.Command{
 	},
 }
 
+var updateDeploymentCmd = &cobra.Command{
+	Use:   "update-deployment",
+	Short: "A brief description -> updateDeploymentCmd",
+	Long:  `A longer description -> updateDeploymentCmd`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("update deployment called")
+		api.UpdateDeployment(replica, image)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(createDeploymentCmd)
 	rootCmd.AddCommand(getDeploymentCmd)
+	rootCmd.AddCommand(updateDeploymentCmd)
 	createDeploymentCmd.PersistentFlags().Int32VarP(&replica, "replica", "r", 1, "This flag sets the number of replicas")
 	createDeploymentCmd.PersistentFlags().StringVarP(&image, "image", "i", "apiserver:1.0.1", "This flag sets the image name with version")
+	updateDeploymentCmd.PersistentFlags().Int32VarP(&replica, "replica", "r", 1, "This flag sets the number of replicas")
+	updateDeploymentCmd.PersistentFlags().StringVarP(&image, "image", "i", "apiserver:1.0.1", "This flag sets the image name with version")
 }

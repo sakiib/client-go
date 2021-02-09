@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/client-go/util/retry"
 
+	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -41,7 +42,7 @@ func CreateDeployment(replica int32, image string) {
 					Containers: []apiv1.Container{
 						{
 							Name:  "apiserver",
-							Image: "sakibalamin/"+image,
+							Image: "sakibalamin/" + image,
 							Ports: []apiv1.ContainerPort{
 								{
 									Name:          "http",
@@ -83,4 +84,33 @@ func GetDeployment() {
 	for _, item := range list.Items {
 		fmt.Printf("%s (%d replicas)\n", item.Name, *item.Spec.Replicas)
 	}
+}
+
+func UpdateDeployment(replica int32, image string) {
+	clientSet, err := CreateClientSet()
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	deploymentClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
+
+	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		result, getErr := deploymentClient.Get(context.TODO(), "apiserver", metav1.GetOptions{})
+		if getErr != nil {
+			panic(fmt.Errorf("Failed to get latest version of Deployment: %v", getErr))
+		}
+
+		result.Spec.Replicas = int32Ptr(replica)
+		result.Spec.Template.Spec.Containers[0].Image = "sakibalamin/" + image
+
+		_, updateErr := deploymentClient.Update(context.TODO(), result, metav1.UpdateOptions{})
+		return updateErr
+	})
+
+	if retryErr != nil {
+		log.Println(retryErr.Error())
+	}
+
+	fmt.Println("Updated deployment...")
 }

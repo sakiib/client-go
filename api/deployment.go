@@ -12,7 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func CreateDeployment(replica int32, image string) {
+func CreateDeployment(replica int32, image string, name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
 		log.Println(err)
@@ -23,25 +23,25 @@ func CreateDeployment(replica int32, image string) {
 
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "apiserver",
+			Name: name,
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: int32Ptr(replica),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": "apiserver",
+					"app": name,
 				},
 			},
 			Template: apiv1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"app": "apiserver",
+						"app": name,
 					},
 				},
 				Spec: apiv1.PodSpec{
 					Containers: []apiv1.Container{
 						{
-							Name:  "apiserver",
+							Name:  name,
 							Image: "sakibalamin/" + image,
 							Ports: []apiv1.ContainerPort{
 								{
@@ -86,7 +86,7 @@ func GetDeployment() {
 	}
 }
 
-func UpdateDeployment(replica int32, image string) {
+func UpdateDeployment(replica int32, image string, name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
 		log.Println(err.Error())
@@ -96,7 +96,7 @@ func UpdateDeployment(replica int32, image string) {
 	deploymentClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		result, getErr := deploymentClient.Get(context.TODO(), "apiserver", metav1.GetOptions{})
+		result, getErr := deploymentClient.Get(context.TODO(), name, metav1.GetOptions{})
 		if getErr != nil {
 			panic(fmt.Errorf("Failed to get latest version of Deployment: %v", getErr))
 		}
@@ -115,7 +115,7 @@ func UpdateDeployment(replica int32, image string) {
 	fmt.Println("Updated deployment...")
 }
 
-func DeleteDeployment() {
+func DeleteDeployment(name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
 		log.Println(err.Error())
@@ -125,7 +125,7 @@ func DeleteDeployment() {
 	deploymentClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
 
 	deletePolicy := metav1.DeletePropagationForeground
-	if err := deploymentClient.Delete(context.TODO(), "apiserver", metav1.DeleteOptions{
+	if err := deploymentClient.Delete(context.TODO(), name, metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
 	}); err != nil {
 		log.Println(err.Error())

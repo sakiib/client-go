@@ -12,8 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-//Creates a new deployment
-//takes the number of replicas, name of the image & the deployment
+//Creates a new deployment, takes the number of replicas, name of the image & the deployment
 func CreateDeployment(replica int32, image string, name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {

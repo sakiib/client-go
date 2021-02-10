@@ -2,12 +2,14 @@ package api
 
 import (
 	"flag"
+	"path/filepath"
+
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
-	"path/filepath"
 )
 
+//generates the clientSet
 func CreateClientSet() (kubernetes.Interface, error) {
 	var kubeConfig *string
 	if home := homedir.HomeDir(); home != "" {

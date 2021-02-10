@@ -12,7 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-//Creates a new deployment, takes the number of replicas, name of the image & the deployment
+// Creates a new deployment, takes the number of replicas, name of the image & the deployment
 func CreateDeployment(replica int32, image string, name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
@@ -68,7 +68,7 @@ func CreateDeployment(replica int32, image string, name string) {
 	fmt.Printf("Deployment created: %q.\n", result.GetObjectMeta().GetName())
 }
 
-//gets all the deployments, name & number of replicas
+// Gets all the deployments, name & number of replicas
 func GetDeployments() {
 	clientSet, err := CreateClientSet()
 	if err != nil {
@@ -88,7 +88,7 @@ func GetDeployments() {
 	}
 }
 
-//gets the deployment with the given name & prints name & number of replicas
+// Gets the deployment with the given name & prints name & number of replicas
 func GetDeployment(name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
@@ -111,7 +111,7 @@ func GetDeployment(name string) {
 	}
 }
 
-//Updates a deployment with the number of replicas, name of the image & the deployment
+// Updates a deployment with the number of replicas, name of the image & the deployment
 func UpdateDeployment(replica int32, image string, name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {
@@ -142,7 +142,7 @@ func UpdateDeployment(replica int32, image string, name string) {
 	fmt.Println("Updated deployment...")
 }
 
-//gets the deployment with the given name & prints name & number of replicas
+// Gets the deployment with the given name & prints name & number of replicas
 func DeleteDeployment(name string) {
 	clientSet, err := CreateClientSet()
 	if err != nil {

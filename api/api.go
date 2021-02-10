@@ -9,7 +9,7 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
-//generates the clientSet
+// Generates the clientSet
 func CreateClientSet() (kubernetes.Interface, error) {
 	var kubeConfig *string
 	if home := homedir.HomeDir(); home != "" {

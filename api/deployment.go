@@ -67,7 +67,7 @@ func CreateDeployment(replica int32, image string, name string) {
 	fmt.Printf("Deployment created: %q.\n", result.GetObjectMeta().GetName())
 }
 
-func GetDeployment() {
+func GetDeployments() {
 	clientSet, err := CreateClientSet()
 	if err != nil {
 		log.Println(err)
@@ -83,6 +83,28 @@ func GetDeployment() {
 
 	for _, item := range list.Items {
 		fmt.Printf("%s (%d replicas)\n", item.Name, *item.Spec.Replicas)
+	}
+}
+
+func GetDeployment(name string) {
+	clientSet, err := CreateClientSet()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	deploymentClient := clientSet.AppsV1().Deployments(apiv1.NamespaceDefault)
+	list, err := deploymentClient.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	for _, item := range list.Items {
+		if item.Name == name {
+			fmt.Printf("%s (%d replicas)\n", item.Name, *item.Spec.Replicas)
+			break
+		}
 	}
 }
 
@@ -110,6 +132,7 @@ func UpdateDeployment(replica int32, image string, name string) {
 
 	if retryErr != nil {
 		log.Println(retryErr.Error())
+		return
 	}
 
 	fmt.Println("Updated deployment...")
@@ -129,6 +152,7 @@ func DeleteDeployment(name string) {
 		PropagationPolicy: &deletePolicy,
 	}); err != nil {
 		log.Println(err.Error())
+		return
 	}
 
 	fmt.Println("Deleted deployment.")

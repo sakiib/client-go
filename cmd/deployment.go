@@ -22,13 +22,23 @@ var createDeploymentCmd = &cobra.Command{
 	},
 }
 
+var getDeploymentsCmd = &cobra.Command{
+	Use:   "get-deployments",
+	Short: "A brief description -> getDeploymentsCmd",
+	Long:  `A longer description -> getDeploymentsCmd`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("get all the deployments called")
+		api.GetDeployments()
+	},
+}
+
 var getDeploymentCmd = &cobra.Command{
 	Use:   "get-deployment",
 	Short: "A brief description -> getDeploymentCmd",
 	Long:  `A longer description -> getDeploymentCmd`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("get deployment called")
-		api.GetDeployment()
+		fmt.Println("get a deployment called")
+		api.GetDeployment(name)
 	},
 }
 
@@ -55,6 +65,7 @@ var deleteDeploymentCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(createDeploymentCmd)
 	rootCmd.AddCommand(getDeploymentCmd)
+	rootCmd.AddCommand(getDeploymentsCmd)
 	rootCmd.AddCommand(updateDeploymentCmd)
 	rootCmd.AddCommand(deleteDeploymentCmd)
 	createDeploymentCmd.PersistentFlags().Int32VarP(&replica, "replica", "r", 1, "This flag sets the number of replicas")
@@ -64,4 +75,5 @@ func init() {
 	updateDeploymentCmd.PersistentFlags().StringVarP(&image, "image", "i", "apiserver:1.0.1", "This flag sets the image name with version")
 	updateDeploymentCmd.PersistentFlags().StringVarP(&name, "name", "n", "apiserver", "This flag sets the deployment name to be updated")
 	deleteDeploymentCmd.PersistentFlags().StringVarP(&name, "name", "n", "apiserver", "This flag sets the deployment name to be deleted")
+	getDeploymentCmd.PersistentFlags().StringVarP(&name, "name", "n", "apiserver", "This flag sets the deployment name to be get")
 }
